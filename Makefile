@@ -1075,6 +1075,9 @@ KBUILD_CFLAGS += $(call cc-disable-warning, restrict)
 
 # Enabled with W=2, disabled by default as noisy
 KBUILD_CFLAGS += $(call cc-disable-warning, maybe-uninitialized)
+# Clang 22+ treats these as errors on older vendor code
+KBUILD_CFLAGS += $(call cc-disable-warning, sometimes-uninitialized)
+KBUILD_CFLAGS += $(call cc-disable-warning, uninitialized)
 
 # disable invalid "can't wrap" optimizations for signed / pointers
 KBUILD_CFLAGS	+= -fno-strict-overflow
