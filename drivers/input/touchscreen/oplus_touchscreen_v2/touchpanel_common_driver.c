@@ -709,6 +709,14 @@ static void tp_gesture_handle(struct touchpanel_data *ts)
 			}
 		}
 
+		if (gesture_info_temp.gesture_type == DOU_TAP) {
+			TP_INFO(ts->tp_index, "report double tap wakeup\n");
+			input_report_key(ts->input_dev, KEY_WAKEUP, 1);
+			input_sync(ts->input_dev);
+			input_report_key(ts->input_dev, KEY_WAKEUP, 0);
+			input_sync(ts->input_dev);
+		}
+
 		input_report_key(ts->input_dev, KEY_GESTURE_START + gesture_info_temp.gesture_type, 1);
 		input_sync(ts->input_dev);
 		input_report_key(ts->input_dev, KEY_GESTURE_START + gesture_info_temp.gesture_type, 0);
