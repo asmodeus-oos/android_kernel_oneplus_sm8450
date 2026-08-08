@@ -1733,8 +1733,14 @@ static int register_flash_device(struct qti_flash_led *led,
 	 * brightness node is root-only by default.
 	 */
 	if (fnode->type == FLASH_LED_TYPE_TORCH) {
+		/*
+		 * The attribute is never created, it only serves as the chmod
+		 * target for the LED class brightness node. __ATTR rejects
+		 * modes with S_IWOTH (VERIFY_OCTAL_PERMISSIONS), so use a
+		 * standard mode here and apply 0666 at runtime via chmod.
+		 */
 		static struct device_attribute torch_brightness_attr =
-			__ATTR(brightness, 0666, NULL, NULL);
+			__ATTR(brightness, 0644, NULL, NULL);
 		sysfs_chmod_file(&fnode->fdev.led_cdev.dev->kobj,
 			&torch_brightness_attr.attr, 0666);
 	}
