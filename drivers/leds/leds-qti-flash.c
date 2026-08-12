@@ -21,6 +21,7 @@
 #include <linux/power_supply.h>
 #include <linux/regmap.h>
 #include <linux/soc/qcom/battery_charger.h>
+#include <linux/sysfs.h>
 
 #include "leds.h"
 
@@ -1723,6 +1724,19 @@ static int register_flash_device(struct qti_flash_led *led,
 		pr_err("Failed to register flash led device:%s\n",
 			fnode->fdev.led_cdev.name);
 		return rc;
+	}
+
+	/*
+	 * ferrari: allow the torch brightness (current in mA) to be driven
+	 * directly by system_app so SystemUI can implement flashlight strength
+	 * levels that the vendor CamX HAL does not support. The LED class
+	 * brightness node is root-only by default.
+	 */
+	if (fnode->type == FLASH_LED_TYPE_TORCH) {
+		static struct device_attribute torch_brightness_attr =
+			__ATTR(brightness, 0666, NULL, NULL);
+		sysfs_chmod_file(&fnode->fdev.led_cdev.dev->kobj,
+			&torch_brightness_attr.attr, 0666);
 	}
 
 	return 0;
